@@ -6,6 +6,7 @@ import com.waterdelivery.app.domain.repository.DeliveryRepository
 import com.waterdelivery.app.domain.repository.InvoiceRepository
 import kotlinx.coroutines.flow.firstOrNull
 import kotlin.time.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -32,7 +33,7 @@ class GenerateInvoiceUseCase(
         val profile = businessProfileRepository.getBusinessProfile().firstOrNull()
         val prefix = profile?.invoicePrefix ?: "INV"
         
-        val now = Clock.System.now()
+        val now = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
         val timestamp = now.toEpochMilliseconds()
         val dateTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
         

@@ -109,9 +109,14 @@ class AndroidPdfInvoiceGenerator(private val context: Context) : PdfInvoiceGener
 
         pdfDocument.finishPage(page)
 
-        val file = File(context.cacheDir, "invoice_${invoice.invoiceNumber}.pdf")
-        pdfDocument.writeTo(FileOutputStream(file))
-        pdfDocument.close()
+        val sanitizedInvoiceNumber = invoice.invoiceNumber.replace(Regex("[^a-zA-Z0-9]"), "_")
+        val file = File(context.cacheDir, "invoice_$sanitizedInvoiceNumber.pdf")
+        
+        try {
+            pdfDocument.writeTo(FileOutputStream(file))
+        } finally {
+            pdfDocument.close()
+        }
 
         file.absolutePath
     }

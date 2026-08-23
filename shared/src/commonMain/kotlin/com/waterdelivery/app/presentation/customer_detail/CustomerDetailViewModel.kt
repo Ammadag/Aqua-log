@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -66,7 +67,7 @@ class CustomerDetailViewModel(
     }
 
     fun generateInvoiceForCurrentMonth(onSuccess: (String) -> Unit) {
-        val now = Clock.System.now()
+        val now = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
         val tz = TimeZone.currentSystemDefault()
         val localNow = now.toLocalDateTime(tz)
         val startOfMonth = LocalDateTime(localNow.year, localNow.month, 1, 0, 0)

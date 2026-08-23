@@ -19,7 +19,7 @@ class GetCustomerSummaryUseCase(
             val customer = customerRepository.getCustomerById(customerId) ?: return@map null
             
             val tz = TimeZone.currentSystemDefault()
-            val now = Clock.System.now().toLocalDateTime(tz)
+            val now = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds()).toLocalDateTime(tz)
             
             val monthDeliveries = deliveries.filter {
                 val deliveryDate = Instant.fromEpochMilliseconds(it.date).toLocalDateTime(tz)

@@ -1,8 +1,10 @@
 package com.waterdelivery.app.core.platform
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -16,7 +18,10 @@ actual interface ShareManager {
 class AndroidShareManager(private val context: Context) : ShareManager {
     override fun shareFile(filePath: String, mimeType: String) {
         val file = File(filePath)
-        if (!file.exists()) return
+        if (!file.exists()) {
+            Toast.makeText(context, "Error: File not found", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val uri = FileProvider.getUriForFile(
             context,
@@ -28,16 +33,33 @@ class AndroidShareManager(private val context: Context) : ShareManager {
             type = mimeType
             putExtra(Intent.EXTRA_STREAM, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            clipData = ClipData.newRawUri("", uri)
         }
 
         val chooser = Intent.createChooser(intent, "Share Invoice")
-        chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(chooser)
+        // Apply flags and clipData to the chooser intent as well for Android 10+
+        chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        chooser.clipData = ClipData.newRawUri("", uri)
+        
+        if (context !is android.app.Activity) {
+            chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        
+        try {
+            context.startActivity(chooser)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Failed to open share menu", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun shareFileViaWhatsApp(filePath: String, phoneNumber: String) {
+        Toast.makeText(context, "Preparing invoice...", Toast.LENGTH_SHORT).show()
+        
         val file = File(filePath)
-        if (!file.exists()) return
+        if (!file.exists()) {
+            Toast.makeText(context, "Error: File not found", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val uri = FileProvider.getUriForFile(
             context,
@@ -45,24 +67,52 @@ class AndroidShareManager(private val context: Context) : ShareManager {
             file
         )
 
-        // Sanitize phone number: remove any non-digit characters
-        val cleanNumber = phoneNumber.filter { it.isDigit() }
+        // Sanitize and format phone number for WhatsApp JID
+        var cleanNumber = phoneNumber.filter { it.isDigit() }
+        
+        if (cleanNumber.isEmpty()) {
+            Toast.makeText(context, "Invalid number, opening share menu...", Toast.LENGTH_SHORT).show()
+            shareFile(filePath, "application/pdf")
+            return
+        }
+
+        // Handle Pakistani local format (03xxxxxxxxx -> 923xxxxxxxxx)
+        if (cleanNumber.startsWith("03") && cleanNumber.length == 11) {
+            cleanNumber = "92" + cleanNumber.substring(1)
+        }
+        
         val jid = "$cleanNumber@s.whatsapp.net"
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
             putExtra(Intent.EXTRA_STREAM, uri)
             putExtra("jid", jid)
-            setPackage("com.whatsapp")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            clipData = ClipData.newRawUri("", uri)
         }
 
+        if (context !is android.app.Activity) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        // Try regular WhatsApp first
+        intent.setPackage("com.whatsapp")
         try {
+            Toast.makeText(context, "Opening WhatsApp...", Toast.LENGTH_SHORT).show()
             context.startActivity(intent)
+            return
         } catch (e: Exception) {
-            // Fallback to regular sharing if WhatsApp is not installed
-            shareFile(filePath, "application/pdf")
+            // Try WhatsApp Business
+            intent.setPackage("com.whatsapp.w4b")
+            try {
+                Toast.makeText(context, "Opening WhatsApp Business...", Toast.LENGTH_SHORT).show()
+                context.startActivity(intent)
+                return
+            } catch (e2: Exception) {
+                // Fallback to regular sharing if neither is installed
+                Toast.makeText(context, "WhatsApp not found, opening share menu...", Toast.LENGTH_SHORT).show()
+                shareFile(filePath, "application/pdf")
+            }
         }
     }
 
@@ -76,7 +126,13 @@ class AndroidShareManager(private val context: Context) : ShareManager {
 
     override fun openWhatsApp(phoneNumber: String, message: String) {
         try {
-            val url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=${Uri.encode(message)}"
+            // Format number for the URL as well
+            var cleanNumber = phoneNumber.filter { it.isDigit() }
+            if (cleanNumber.startsWith("03") && cleanNumber.length == 11) {
+                cleanNumber = "92" + cleanNumber.substring(1)
+            }
+            
+            val url = "https://api.whatsapp.com/send?phone=$cleanNumber&text=${Uri.encode(message)}"
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(url)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

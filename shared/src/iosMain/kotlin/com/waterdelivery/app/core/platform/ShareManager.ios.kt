@@ -34,8 +34,14 @@ class IosShareManager : ShareManager {
     }
 
     override fun openWhatsApp(phoneNumber: String, message: String) {
+        var cleanNumber = phoneNumber.filter { it.isDigit() }
+        if (cleanNumber.startsWith("03") && cleanNumber.length == 11) {
+            cleanNumber = "92" + cleanNumber.substring(1)
+        }
+        
         val encodedMessage = message.replace(" ", "%20")
-        val url = NSURL.URLWithString("whatsapp://send?phone=$phoneNumber&text=$encodedMessage")
+        val urlString = "whatsapp://send?phone=$cleanNumber&text=$encodedMessage"
+        val url = NSURL.URLWithString(urlString)
         if (url != null && UIApplication.sharedApplication.canOpenURL(url)) {
             UIApplication.sharedApplication.openURL(url)
         }

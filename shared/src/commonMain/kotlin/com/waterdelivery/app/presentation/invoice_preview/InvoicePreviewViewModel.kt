@@ -8,6 +8,7 @@ import com.waterdelivery.app.domain.repository.BusinessProfileRepository
 import com.waterdelivery.app.domain.repository.CustomerRepository
 import com.waterdelivery.app.domain.repository.DeliveryRepository
 import com.waterdelivery.app.domain.repository.InvoiceRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,18 +60,33 @@ class InvoicePreviewViewModel(
 
     fun shareInvoice() {
         val state = _uiState.value
-        val invoice = state.invoice ?: return
-        val customer = state.customer ?: return
-        val profile = state.businessProfile ?: return
+        if (state.isLoading) return
+        
+        if (state.invoice == null || state.customer == null || state.businessProfile == null) {
+            val missing = mutableListOf<String>()
+            if (state.invoice == null) missing.add("invoice")
+            if (state.customer == null) missing.add("customer")
+            if (state.businessProfile == null) missing.add("business profile")
+            
+            _uiState.update { it.copy(errorMessage = "Cannot share: ${missing.joinToString(", ")} data is missing") }
+            return
+        }
+
+        val invoice = state.invoice
+        val customer = state.customer
+        val profile = state.businessProfile
         
         viewModelScope.launch {
             try {
-                _uiState.update { it.copy(isLoading = true) }
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                // Small delay to ensure UI shows loading state
+                delay(500)
                 val path = pdfGenerator.generateInvoicePdf(invoice, customer, profile, state.deliveries)
                 shareManager.shareFileViaWhatsApp(path, customer.phoneNumber)
-                _uiState.update { it.copy(isLoading = false) }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                _uiState.update { it.copy(errorMessage = e.message ?: "An unknown error occurred") }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }

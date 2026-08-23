@@ -64,7 +64,8 @@ fun InvoicePreviewScreen(
                 ) {
                     AppPrimaryButton(
                         text = "SHARE VIA WHATSAPP",
-                        onClick = viewModel::shareInvoice,
+                        onClick = { viewModel.shareInvoice() },
+                        enabled = !uiState.isLoading,
                         modifier = Modifier.weight(1f)
                     )
                 }

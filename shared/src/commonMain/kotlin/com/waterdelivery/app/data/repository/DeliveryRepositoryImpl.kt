@@ -8,6 +8,7 @@ import com.waterdelivery.app.domain.repository.DeliveryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
@@ -41,7 +42,7 @@ class DeliveryRepositoryImpl(
     }
 
     override fun getTodayDeliveries(): Flow<List<Delivery>> {
-        val now = Clock.System.now()
+        val now = Instant.fromEpochMilliseconds(Clock.System.now().toEpochMilliseconds())
         val tz = TimeZone.currentSystemDefault()
         val today = now.toLocalDateTime(tz).date
         
