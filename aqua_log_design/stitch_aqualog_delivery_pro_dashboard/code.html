@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AquaFlow - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "primary-container": "#005f73",
+                      "primary-fixed-dim": "#8bd1e8",
+                      "on-primary-fixed-variant": "#004e5f",
+                      "error-container": "#ffdad6",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#aeedd7",
+                      "on-tertiary-fixed-variant": "#514620",
+                      "on-primary-container": "#91d7ee",
+                      "surface-container-highest": "#d4e4fa",
+                      "on-secondary-fixed-variant": "#0b5040",
+                      "surface-bright": "#f8f9ff",
+                      "tertiary-fixed-dim": "#d6c695",
+                      "on-tertiary-container": "#493f1a",
+                      "surface-container-low": "#eef4ff",
+                      "outline-variant": "#bfc8cc",
+                      "surface-variant": "#d4e4fa",
+                      "inverse-surface": "#233143",
+                      "on-secondary": "#ffffff",
+                      "surface-container-high": "#dbe9ff",
+                      "outline": "#6f797c",
+                      "surface-dim": "#ccdbf2",
+                      "on-tertiary": "#ffffff",
+                      "on-background": "#0d1c2d",
+                      "on-surface": "#0d1c2d",
+                      "on-secondary-container": "#306d5c",
+                      "secondary": "#2b6958",
+                      "tertiary-fixed": "#f3e2af",
+                      "secondary-fixed-dim": "#95d3be",
+                      "surface-container": "#e5efff",
+                      "surface": "#f8f9ff",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#13677b",
+                      "background": "#f8f9ff",
+                      "on-primary-fixed": "#001f27",
+                      "inverse-primary": "#8bd1e8",
+                      "primary": "#004655",
+                      "primary-fixed": "#b2ebff",
+                      "tertiary": "#6a5e36",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed": "#002018",
+                      "inverse-on-surface": "#e9f1ff",
+                      "on-tertiary-fixed": "#231b00",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface-variant": "#3f484c",
+                      "secondary-fixed": "#b0efda",
+                      "tertiary-container": "#baaa7c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "gutter": "16px",
+                      "touch-target": "48px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "price-display": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "price-display": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col antialiased">
+<!-- TopAppBar (Mobile ONLY based on rules, Desktop hidden nav shell rules apply but we're mostly focused on mobile view for delivery driver) -->
+<header class="flex items-center justify-between px-margin-mobile h-touch-target w-full z-40 bg-surface text-primary border-b border-outline-variant flat no shadows md:hidden sticky top-0">
+<button aria-label="Menu" class="w-touch-target h-touch-target flex items-center justify-center text-primary transition-colors duration-200 ease-in-out hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="text-headline-md font-headline-md text-primary-container">AquaFlow</h1>
+<button aria-label="Add" class="w-touch-target h-touch-target flex items-center justify-center text-primary transition-colors duration-200 ease-in-out hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">add</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow px-margin-mobile pt-gutter pb-24 md:px-margin-desktop md:max-w-7xl md:mx-auto md:w-full">
+<!-- Greeting Section -->
+<section class="mb-gutter md:mb-8">
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile md:text-headline-lg md:font-headline-lg text-on-surface mb-2">Good Morning, Ahmed</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Here's your delivery summary</p>
+</section>
+<!-- Summary Grid (Bento style) -->
+<section class="grid grid-cols-2 gap-base md:gap-gutter mb-gutter md:mb-8">
+<!-- Large Card -->
+<div class="col-span-2 bg-surface-container-low rounded-xl p-gutter border border-surface-container-highest flex items-center justify-between shadow-sm">
+<div>
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-1 uppercase tracking-wider">Today's Deliveries</p>
+<p class="text-headline-lg-mobile font-headline-lg-mobile text-primary">24 <span class="text-body-lg font-body-lg text-on-surface-variant font-normal">/ 30</span></p>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="bg-surface rounded-xl p-gutter border border-outline-variant flex flex-col justify-between">
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-2 uppercase tracking-wider">Bottles Delivered</p>
+<div class="flex items-end justify-between">
+<p class="text-headline-md font-headline-md text-on-surface">142</p>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+</div>
+<!-- Small Card 2 -->
+<div class="bg-surface rounded-xl p-gutter border border-outline-variant flex flex-col justify-between">
+<p class="text-label-caps font-label-caps text-on-surface-variant mb-2 uppercase tracking-wider">Empties Returned</p>
+<div class="flex items-end justify-between">
+<p class="text-headline-md font-headline-md text-on-surface">115</p>
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 0;">recycling</span>
+</div>
+</div>
+</section>
+<!-- Quick Actions -->
+<section class="mb-gutter md:mb-8 flex flex-col gap-base md:flex-row">
+<button class="bg-primary-container text-on-primary h-touch-target rounded-lg flex-grow flex items-center justify-center gap-2 font-body-lg text-body-lg shadow-[0px_4px_12px_rgba(0,95,115,0.08)] active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined">add_circle</span>
+                Add Delivery
+            </button>
+<div class="flex gap-base md:w-1/2">
+<button class="border-[1.5px] border-primary-container text-primary-container h-touch-target rounded-lg flex-1 flex items-center justify-center gap-2 font-body-lg text-body-lg bg-surface active:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">group</span>
+                    Customers
+                </button>
+<button class="border-[1.5px] border-primary-container text-primary-container h-touch-target rounded-lg flex-1 flex items-center justify-center gap-2 font-body-lg text-body-lg bg-surface active:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">receipt_long</span>
+                    Invoices
+                </button>
+</div>
+</section>
+<!-- Recent Customers List -->
+<section>
+<div class="flex items-center justify-between mb-base">
+<h3 class="text-headline-md font-headline-md text-on-surface">Recent Customers</h3>
+<button class="text-primary text-body-sm font-body-sm font-semibold">View All</button>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<!-- Customer Row 1 -->
+<div class="p-gutter border-b border-outline-variant flex items-start justify-between active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex-grow pr-4">
+<p class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">Ahmed Electronics</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Gulberg III, Lahore
+                        </p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">call</span> +92 300 1234567
+                        </p>
+</div>
+<div class="flex flex-col items-end">
+<div class="bg-secondary-container/20 text-secondary px-2 py-1 rounded text-label-caps font-label-caps mb-2">Delivered</div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface">5 bottles</p>
+</div>
+</div>
+<!-- Customer Row 2 -->
+<div class="p-gutter border-b border-outline-variant flex items-start justify-between active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex-grow pr-4">
+<p class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">Ali House</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> DHA Phase 5
+                        </p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">call</span> +92 321 7654321
+                        </p>
+</div>
+<div class="flex flex-col items-end">
+<div class="bg-outline-variant/20 text-on-surface-variant px-2 py-1 rounded text-label-caps font-label-caps mb-2">Pending</div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface">2 bottles</p>
+</div>
+</div>
+<!-- Customer Row 3 -->
+<div class="p-gutter flex items-start justify-between active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex-grow pr-4">
+<p class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">Bilal Traders</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Model Town
+                        </p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">call</span> +92 333 1112223
+                        </p>
+</div>
+<div class="flex flex-col items-end">
+<div class="bg-secondary-container/20 text-secondary px-2 py-1 rounded text-label-caps font-label-caps mb-2">Delivered</div>
+<p class="text-body-sm font-body-sm font-semibold text-on-surface">10 bottles</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile ONLY) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 bg-surface border-t border-outline-variant flat no shadows md:hidden">
+<!-- Active: Home -->
+<a class="flex flex-col items-center justify-center text-primary font-semibold w-full h-full active:scale-95 transition-transform duration-150 hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-label-caps font-label-caps">Home</span>
+</a>
+<!-- Inactive: Customers -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full active:scale-95 transition-transform duration-150 hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">group</span>
+<span class="text-label-caps font-label-caps">Customers</span>
+</a>
+<!-- Inactive: Invoices -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full active:scale-95 transition-transform duration-150 hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+<span class="text-label-caps font-label-caps">Invoices</span>
+</a>
+<!-- Inactive: Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-full h-full active:scale-95 transition-transform duration-150 hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-label-caps font-label-caps">Settings</span>
+</a>
+</nav>
+</body></html>

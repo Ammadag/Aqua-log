@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customers - AquaFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "primary-container": "#005f73",
+                      "primary-fixed-dim": "#8bd1e8",
+                      "on-primary-fixed-variant": "#004e5f",
+                      "error-container": "#ffdad6",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#aeedd7",
+                      "on-tertiary-fixed-variant": "#514620",
+                      "on-primary-container": "#91d7ee",
+                      "surface-container-highest": "#d4e4fa",
+                      "on-secondary-fixed-variant": "#0b5040",
+                      "surface-bright": "#f8f9ff",
+                      "tertiary-fixed-dim": "#d6c695",
+                      "on-tertiary-container": "#493f1a",
+                      "surface-container-low": "#eef4ff",
+                      "outline-variant": "#bfc8cc",
+                      "surface-variant": "#d4e4fa",
+                      "inverse-surface": "#233143",
+                      "on-secondary": "#ffffff",
+                      "surface-container-high": "#dbe9ff",
+                      "outline": "#6f797c",
+                      "surface-dim": "#ccdbf2",
+                      "on-tertiary": "#ffffff",
+                      "on-background": "#0d1c2d",
+                      "on-surface": "#0d1c2d",
+                      "on-secondary-container": "#306d5c",
+                      "secondary": "#2b6958",
+                      "tertiary-fixed": "#f3e2af",
+                      "secondary-fixed-dim": "#95d3be",
+                      "surface-container": "#e5efff",
+                      "surface": "#f8f9ff",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#13677b",
+                      "background": "#f8f9ff",
+                      "on-primary-fixed": "#001f27",
+                      "inverse-primary": "#8bd1e8",
+                      "primary": "#004655",
+                      "primary-fixed": "#b2ebff",
+                      "tertiary": "#6a5e36",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed": "#002018",
+                      "inverse-on-surface": "#e9f1ff",
+                      "on-tertiary-fixed": "#231b00",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface-variant": "#3f484c",
+                      "secondary-fixed": "#b0efda",
+                      "tertiary-container": "#baaa7c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "gutter": "16px",
+                      "touch-target": "48px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "price-display": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "price-display": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* High-end UI Patterns: Subtle grid background */
+        body {
+            background-image: radial-gradient(var(--tw-colors-surface-variant) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-sm antialiased min-h-screen relative overflow-x-hidden md:hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-40 flex items-center justify-between px-margin-mobile h-touch-target bg-surface text-primary border-b border-outline-variant shadow-none transition-colors duration-200 ease-in-out">
+<button aria-label="Menu" class="w-touch-target h-touch-target flex items-center justify-center -ml-3 text-primary hover:bg-surface-container-low rounded-full transition-colors duration-200 ease-in-out">
+<span class="material-symbols-outlined text-[24px]">menu</span>
+</button>
+<div class="text-headline-md font-headline-md text-primary-container truncate flex-1 text-center">
+            AquaFlow
+        </div>
+<button aria-label="Add" class="w-touch-target h-touch-target flex items-center justify-center -mr-3 text-primary hover:bg-surface-container-low rounded-full transition-colors duration-200 ease-in-out">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="pt-[72px] pb-[88px] px-margin-mobile flex flex-col gap-base">
+<!-- Page Header -->
+<div class="py-2">
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">Customers</h1>
+</div>
+<!-- Search Bar -->
+<div class="relative w-full h-touch-target bg-surface-container-lowest rounded-lg border border-outline-variant flex items-center px-4 shadow-[0_2px_8px_rgba(0,95,115,0.04)] focus-within:border-primary focus-within:shadow-[0_4px_12px_rgba(0,95,115,0.08)] transition-all duration-200">
+<span class="material-symbols-outlined text-on-surface-variant mr-3">search</span>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-body-lg font-body-lg text-on-surface placeholder:text-on-surface-variant p-0 h-full" placeholder="Search customers..." type="text"/>
+<button aria-label="Filter" class="ml-3 text-primary hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<!-- Customer List (High Density Rows) -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-[0_4px_12px_rgba(0,95,115,0.04)] mt-2">
+<!-- Item 1 -->
+<div class="flex items-center p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-150 cursor-pointer">
+<div class="w-[40px] h-[40px] rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-headline-md font-headline-md shrink-0 mr-4">
+                    A
+                </div>
+<div class="flex-1 min-w-0">
+<h3 class="text-body-lg font-body-lg font-semibold text-on-surface truncate">Ahmed Electronics</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">call</span> +92 300 1234567
+                    </p>
+<p class="text-label-caps font-label-caps text-outline flex items-center gap-1 mt-1 truncate">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Gulberg III, Lahore
+                    </p>
+</div>
+<div class="shrink-0 flex flex-col items-end ml-2">
+<div class="bg-primary/10 text-primary-container px-2 py-1 rounded border border-primary/20 text-label-caps font-label-caps font-bold">
+                        8 BOTTLES
+                    </div>
+<span class="text-label-caps font-label-caps text-outline mt-1">This Mo.</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-150 cursor-pointer">
+<div class="w-[40px] h-[40px] rounded-full bg-surface-variant text-primary-container flex items-center justify-center text-headline-md font-headline-md shrink-0 mr-4">
+                    A
+                </div>
+<div class="flex-1 min-w-0">
+<h3 class="text-body-lg font-body-lg font-semibold text-on-surface truncate">Ali House</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">call</span> +92 321 7654321
+                    </p>
+<p class="text-label-caps font-label-caps text-outline flex items-center gap-1 mt-1 truncate">
+<span class="material-symbols-outlined text-[14px]">location_on</span> DHA Phase 5
+                    </p>
+</div>
+<div class="shrink-0 flex flex-col items-end ml-2">
+<div class="bg-primary/10 text-primary-container px-2 py-1 rounded border border-primary/20 text-label-caps font-label-caps font-bold">
+                        12 BOTTLES
+                    </div>
+<span class="text-label-caps font-label-caps text-outline mt-1">This Mo.</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-150 cursor-pointer">
+<div class="w-[40px] h-[40px] rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center text-headline-md font-headline-md shrink-0 mr-4">
+                    A
+                </div>
+<div class="flex-1 min-w-0">
+<h3 class="text-body-lg font-body-lg font-semibold text-on-surface truncate">ABC Office</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">call</span> +92 345 9876543
+                    </p>
+<p class="text-label-caps font-label-caps text-outline flex items-center gap-1 mt-1 truncate">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Johar Town
+                    </p>
+</div>
+<div class="shrink-0 flex flex-col items-end ml-2">
+<div class="bg-primary text-on-primary px-2 py-1 rounded text-label-caps font-label-caps font-bold">
+                        20 BOTTLES
+                    </div>
+<span class="text-label-caps font-label-caps text-outline mt-1">This Mo.</span>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="flex items-center p-4 border-b border-outline-variant hover:bg-surface-container-low transition-colors duration-150 cursor-pointer">
+<div class="w-[40px] h-[40px] rounded-full bg-surface-variant text-primary-container flex items-center justify-center text-headline-md font-headline-md shrink-0 mr-4">
+                    B
+                </div>
+<div class="flex-1 min-w-0">
+<h3 class="text-body-lg font-body-lg font-semibold text-on-surface truncate">Bilal Traders</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">call</span> +92 333 1112223
+                    </p>
+<p class="text-label-caps font-label-caps text-outline flex items-center gap-1 mt-1 truncate">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Model Town
+                    </p>
+</div>
+<div class="shrink-0 flex flex-col items-end ml-2">
+<div class="bg-primary/10 text-primary-container px-2 py-1 rounded border border-primary/20 text-label-caps font-label-caps font-bold">
+                        5 BOTTLES
+                    </div>
+<span class="text-label-caps font-label-caps text-outline mt-1">This Mo.</span>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="flex items-center p-4 hover:bg-surface-container-low transition-colors duration-150 cursor-pointer">
+<div class="w-[40px] h-[40px] rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-headline-md font-headline-md shrink-0 mr-4">
+                    C
+                </div>
+<div class="flex-1 min-w-0">
+<h3 class="text-body-lg font-body-lg font-semibold text-on-surface truncate">City School</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">call</span> +92 312 4445556
+                    </p>
+<p class="text-label-caps font-label-caps text-outline flex items-center gap-1 mt-1 truncate">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Cavalry Ground
+                    </p>
+</div>
+<div class="shrink-0 flex flex-col items-end ml-2">
+<div class="bg-primary/10 text-primary-container px-2 py-1 rounded border border-primary/20 text-label-caps font-label-caps font-bold">
+                        15 BOTTLES
+                    </div>
+<span class="text-label-caps font-label-caps text-outline mt-1">This Mo.</span>
+</div>
+</div>
+</div>
+<!-- Spacer for FAB -->
+<div class="h-[80px]"></div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-[88px] right-margin-mobile bg-primary text-on-primary h-[56px] px-6 rounded-2xl flex items-center justify-center shadow-[0_4px_12px_rgba(0,95,115,0.24)] hover:bg-primary-container hover:shadow-[0_6px_16px_rgba(0,95,115,0.32)] transition-all duration-200 z-30 group">
+<span class="material-symbols-outlined mr-2 group-hover:scale-110 transition-transform">add</span>
+<span class="text-body-lg font-body-lg font-semibold tracking-wide">Add Customer</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 bg-surface border-t border-transparent shadow-[0_-4px_24px_rgba(0,0,0,0.02)] transition-colors duration-200">
+<!-- Home (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-transform duration-150 w-full h-full rounded-lg mx-1">
+<span class="material-symbols-outlined text-[24px] mb-1">home</span>
+<span class="text-label-caps font-label-caps">Home</span>
+</button>
+<!-- Customers (Active) -->
+<button class="flex flex-col items-center justify-center text-primary font-semibold hover:bg-surface-container-low active:scale-95 transition-transform duration-150 w-full h-full rounded-lg mx-1">
+<div class="bg-primary/10 px-4 py-0.5 rounded-full mb-1">
+<span class="material-symbols-outlined text-[24px]" data-weight="fill">group</span>
+</div>
+<span class="text-label-caps font-label-caps">Customers</span>
+</button>
+<!-- Invoices (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-transform duration-150 w-full h-full rounded-lg mx-1">
+<span class="material-symbols-outlined text-[24px] mb-1">receipt_long</span>
+<span class="text-label-caps font-label-caps">Invoices</span>
+</button>
+<!-- Settings (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low active:scale-95 transition-transform duration-150 w-full h-full rounded-lg mx-1">
+<span class="material-symbols-outlined text-[24px] mb-1">settings</span>
+<span class="text-label-caps font-label-caps">Settings</span>
+</button>
+</nav>
+</body></html>

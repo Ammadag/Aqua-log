@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Customer - AquaFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#514620",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#e5efff",
+                        "primary": "#004655",
+                        "background": "#f8f9ff",
+                        "on-background": "#0d1c2d",
+                        "surface-container-low": "#eef4ff",
+                        "on-secondary-fixed-variant": "#0b5040",
+                        "on-primary-fixed": "#001f27",
+                        "on-secondary-fixed": "#002018",
+                        "surface-container-high": "#dbe9ff",
+                        "on-tertiary-fixed": "#231b00",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#3f484c",
+                        "primary-fixed-dim": "#8bd1e8",
+                        "surface-container-highest": "#d4e4fa",
+                        "secondary": "#2b6958",
+                        "outline-variant": "#bfc8cc",
+                        "tertiary": "#6a5e36",
+                        "on-surface": "#0d1c2d",
+                        "surface-tint": "#13677b",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#004e5f",
+                        "tertiary-container": "#baaa7c",
+                        "primary-fixed": "#b2ebff",
+                        "surface-bright": "#f8f9ff",
+                        "surface-variant": "#d4e4fa",
+                        "on-tertiary-container": "#493f1a",
+                        "surface": "#f8f9ff",
+                        "secondary-fixed": "#b0efda",
+                        "on-secondary-container": "#306d5c",
+                        "secondary-fixed-dim": "#95d3be",
+                        "inverse-on-surface": "#e9f1ff",
+                        "inverse-primary": "#8bd1e8",
+                        "primary-container": "#005f73",
+                        "inverse-surface": "#233143",
+                        "secondary-container": "#aeedd7",
+                        "surface-dim": "#ccdbf2",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "outline": "#6f797c",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#f3e2af",
+                        "tertiary-fixed-dim": "#d6c695",
+                        "on-primary-container": "#91d7ee",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "touch-target": "48px",
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "price-display": ["18px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg">
+<!-- TopAppBar Semantic Shell (Hidden Navigation since it's a linear task, but keeping header) -->
+<header class="bg-surface border-b border-outline-variant flex items-center justify-between px-margin-mobile h-[64px] w-full z-40">
+<button aria-label="Go back" class="h-touch-target w-touch-target flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 ease-in-out rounded-full">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-headline-md font-headline-md text-primary font-bold">Add Customer</h1>
+<div class="w-touch-target h-touch-target"></div> <!-- Placeholder for balance -->
+</header>
+<main class="flex-1 w-full max-w-3xl mx-auto px-margin-mobile py-6 flex flex-col gap-6">
+<!-- Import from Contacts -->
+<section>
+<button class="w-full bg-white border border-outline-variant rounded-lg p-4 flex items-center gap-4 hover:shadow-[0px_4px_12px_rgba(0,95,115,0.08)] transition-shadow">
+<div class="h-12 w-12 rounded-full bg-surface-container-low text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]" data-icon="contact_phone">contact_phone</span>
+</div>
+<div class="text-left flex-1">
+<div class="text-body-lg font-body-lg font-semibold text-on-surface">Import from Contacts</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">Select a customer from your phone contacts</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+</section>
+<!-- Divider -->
+<div class="flex items-center gap-4">
+<div class="flex-1 h-px bg-outline-variant"></div>
+<span class="text-body-sm font-body-sm text-on-surface-variant uppercase tracking-wider">Enter Manually</span>
+<div class="flex-1 h-px bg-outline-variant"></div>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-6 bg-white border border-outline-variant rounded-lg p-6 pb-24">
+<!-- Customer Name -->
+<div class="relative">
+<input class="block w-full px-4 pt-6 pb-2 text-body-lg font-body-lg text-on-surface bg-transparent border border-outline rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-primary peer" id="customer_name" placeholder=" " required="" type="text"/>
+<label class="absolute text-body-sm font-body-sm text-on-surface-variant duration-300 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-4 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:text-primary" for="customer_name">Customer Name</label>
+</div>
+<!-- Phone Number -->
+<div class="relative flex">
+<span class="inline-flex items-center px-4 border border-r-0 border-outline rounded-l-lg bg-surface-container-low text-on-surface-variant text-body-lg font-body-lg">
+                    +92
+                </span>
+<div class="relative w-full">
+<input class="block w-full px-4 pt-6 pb-2 text-body-lg font-body-lg text-on-surface bg-transparent border border-outline rounded-r-lg appearance-none focus:outline-none focus:ring-0 focus:border-primary peer" id="phone_number" placeholder=" " required="" type="tel"/>
+<label class="absolute text-body-sm font-body-sm text-on-surface-variant duration-300 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-4 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:text-primary" for="phone_number">Phone Number</label>
+</div>
+</div>
+<!-- Address -->
+<div class="relative">
+<textarea class="block w-full px-4 pt-6 pb-2 text-body-lg font-body-lg text-on-surface bg-transparent border border-outline rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-primary peer resize-none" id="address" placeholder=" " required="" rows="3"></textarea>
+<label class="absolute text-body-sm font-body-sm text-on-surface-variant duration-300 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-4 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:text-primary" for="address">Address</label>
+</div>
+<!-- Notes -->
+<div class="relative">
+<textarea class="block w-full px-4 pt-6 pb-2 text-body-lg font-body-lg text-on-surface bg-transparent border border-outline rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-primary peer resize-none" id="notes" placeholder=" " rows="2"></textarea>
+<label class="absolute text-body-sm font-body-sm text-on-surface-variant duration-300 transform -translate-y-3 scale-75 top-4 z-10 origin-[0] left-4 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-3 peer-focus:text-primary" for="notes">Notes (Optional)</label>
+</div>
+</form>
+</main>
+<!-- Sticky Bottom CTA (Linear Intent - No Navigation) -->
+<div class="fixed bottom-0 left-0 w-full p-margin-mobile bg-surface border-t border-outline-variant z-50 flex justify-center">
+<button class="w-full max-w-3xl h-touch-target bg-primary-container text-on-primary font-body-lg font-semibold rounded-lg flex items-center justify-center uppercase tracking-wider shadow-sm hover:opacity-90 active:scale-[0.98] transition-all">
+            SAVE CUSTOMER
+        </button>
+</div>
+</body></html>
