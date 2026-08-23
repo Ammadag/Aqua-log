@@ -80,8 +80,8 @@ class InvoicePreviewViewModel(
             try {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 // Small delay to ensure UI shows loading state
-                delay(500)
                 val path = pdfGenerator.generateInvoicePdf(invoice, customer, profile, state.deliveries)
+                delay(1000)
                 shareManager.shareFileViaWhatsApp(path, customer.phoneNumber)
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorMessage = e.message ?: "An unknown error occurred") }

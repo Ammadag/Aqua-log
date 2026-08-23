@@ -54,7 +54,7 @@ class AndroidShareManager(private val context: Context) : ShareManager {
 
     override fun shareFileViaWhatsApp(filePath: String, phoneNumber: String) {
         Toast.makeText(context, "Preparing invoice...", Toast.LENGTH_SHORT).show()
-        
+
         val file = File(filePath)
         if (!file.exists()) {
             Toast.makeText(context, "Error: File not found", Toast.LENGTH_SHORT).show()
@@ -67,30 +67,12 @@ class AndroidShareManager(private val context: Context) : ShareManager {
             file
         )
 
-        // Sanitize and format phone number for WhatsApp JID
-        var cleanNumber = phoneNumber.filter { it.isDigit() }
-        
-        if (cleanNumber.isEmpty()) {
-            Toast.makeText(context, "Invalid number, opening share menu...", Toast.LENGTH_SHORT).show()
-            shareFile(filePath, "application/pdf")
-            return
-        }
-
-        // Handle Pakistani local format (03xxxxxxxxx -> 923xxxxxxxxx)
-        if (cleanNumber.startsWith("03") && cleanNumber.length == 11) {
-            cleanNumber = "92" + cleanNumber.substring(1)
-        }
-        
-        val jid = "$cleanNumber@s.whatsapp.net"
-
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra("jid", jid)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             clipData = ClipData.newRawUri("", uri)
         }
-
         if (context !is android.app.Activity) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
