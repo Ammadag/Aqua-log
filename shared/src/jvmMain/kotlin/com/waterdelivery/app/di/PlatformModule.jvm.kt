@@ -1,5 +1,6 @@
 package com.waterdelivery.app.di
 
+import com.waterdelivery.app.core.platform.ContactFetchResult
 import com.waterdelivery.app.core.platform.ContactManager
 import com.waterdelivery.app.core.platform.PdfInvoiceGenerator
 import com.waterdelivery.app.core.platform.ShareManager
@@ -7,7 +8,6 @@ import com.waterdelivery.app.domain.model.BusinessProfile
 import com.waterdelivery.app.domain.model.Customer
 import com.waterdelivery.app.domain.model.Delivery
 import com.waterdelivery.app.domain.model.Invoice
-import com.waterdelivery.app.presentation.contact_picker.ContactItem
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -32,7 +32,7 @@ actual val platformModule: Module = module {
     }
     single<ContactManager> {
         object : ContactManager {
-            override suspend fun getContacts(): List<ContactItem> = emptyList()
+            override suspend fun getContacts(): ContactFetchResult = ContactFetchResult.Success(emptyList())
             override fun hasContactPermission(): Boolean = false
         }
     }

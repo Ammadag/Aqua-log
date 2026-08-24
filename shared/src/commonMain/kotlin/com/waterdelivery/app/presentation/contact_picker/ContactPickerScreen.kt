@@ -17,7 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.waterdelivery.app.presentation.ui.components.AppBottomSheet
 import com.waterdelivery.app.presentation.ui.components.AppPrimaryButton
 import com.waterdelivery.app.presentation.ui.components.AppTopBar
 import com.waterdelivery.app.presentation.ui.components.SearchBar
@@ -50,12 +51,26 @@ fun ContactPickerScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showPermissionRequest by remember { mutableStateOf(false) }
 
+    val handlePermissionRequest = {
+        viewModel.dismissBottomSheet()
+        showPermissionRequest = true
+    }
+
     if (showPermissionRequest) {
         RequestContactPermission { granted ->
             showPermissionRequest = false
-            viewModel.checkPermissionAndLoadContacts()
+            if (granted) {
+                viewModel.checkPermissionAndLoadContacts()
+            } else {
+                viewModel.onPermissionDenied(onRequestPermissionAgain = handlePermissionRequest)
+            }
         }
     }
+
+    AppBottomSheet(
+        state = uiState.bottomSheetState,
+        onDismissRequest = viewModel::dismissBottomSheet
+    )
 
     Scaffold(
         topBar = {
@@ -74,16 +89,17 @@ fun ContactPickerScreen(
         ) {
             if (!uiState.hasPermission) {
                 PermissionRequiredState(
-                    onRequestPermission = {
-                        showPermissionRequest = true
-                    }
+                    onRequestPermission = handlePermissionRequest
                 )
             } else if (uiState.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             } else if (uiState.contacts.isEmpty() && uiState.searchQuery.isBlank()) {
-                EmptyContactsState()
+                EmptyContactsState(
+                    errorMessage = uiState.errorMessage,
+                    onRetry = { viewModel.loadContacts() }
+                )
             } else {
                 SearchBar(
                     query = uiState.searchQuery,
@@ -108,7 +124,9 @@ fun ContactPickerScreen(
                 Box(modifier = Modifier.padding(Spacing.large)) {
                     AppPrimaryButton(
                         text = "CONTINUE WITH SELECTED CONTACT",
-                        onClick = { uiState.selectedContact?.let { onContactSelected(it) } },
+                        onClick = {
+                            viewModel.onContinueClick(onContactConfirmed = onContactSelected)
+                        },
                         enabled = uiState.selectedContact != null
                     )
                 }
@@ -125,7 +143,7 @@ private fun PermissionRequiredState(onRequestPermission: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            Icons.Default.CheckCircle, // Placeholder icon
+            imageVector = Icons.Default.Lock,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
@@ -137,7 +155,7 @@ private fun PermissionRequiredState(onRequestPermission: () -> Unit) {
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "We need access to your contacts to help you add customers quickly.",
+            text = "AquaLog needs access to your contacts to help you import customer contact information directly.",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -148,16 +166,28 @@ private fun PermissionRequiredState(onRequestPermission: () -> Unit) {
 }
 
 @Composable
-private fun EmptyContactsState() {
-    Box(
+private fun EmptyContactsState(
+    errorMessage: String? = null,
+    onRetry: () -> Unit
+) {
+    Column(
         modifier = Modifier.fillMaxSize().padding(Spacing.huge),
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "No contacts found on your device.",
+            text = errorMessage ?: "No contacts found on your device.",
             style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        if (errorMessage != null) {
+            Spacer(modifier = Modifier.height(Spacing.large))
+            AppPrimaryButton(
+                text = "RETRY",
+                onClick = onRetry
+            )
+        }
     }
 }
 

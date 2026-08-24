@@ -4,7 +4,7 @@ import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 actual fun RequestContactPermission(
@@ -15,7 +15,7 @@ actual fun RequestContactPermission(
         onResult = onResult
     )
 
-    SideEffect {
+    LaunchedEffect(Unit) {
         launcher.launch(Manifest.permission.READ_CONTACTS)
     }
 }

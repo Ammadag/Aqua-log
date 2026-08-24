@@ -1,8 +1,6 @@
 package com.waterdelivery.app.core.platform
 
-import com.waterdelivery.app.presentation.contact_picker.ContactItem
-
 actual interface ContactManager {
-    actual suspend fun getContacts(): List<ContactItem>
+    actual suspend fun getContacts(): ContactFetchResult
     actual fun hasContactPermission(): Boolean
 }
