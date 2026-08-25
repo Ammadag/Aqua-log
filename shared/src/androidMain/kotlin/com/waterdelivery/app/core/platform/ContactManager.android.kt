@@ -63,7 +63,9 @@ class AndroidContactManager(private val context: Context) : ContactManager {
                     val number = c.getString(numberIndex) ?: continue
 
                     if (seenNumbers.add(number)) {
-                        contactList.add(ContactItem(id, name, number))
+                        // Use a combination of contact ID and phone number to ensure uniqueness in LazyColumn keys,
+                        // as one contact can have multiple phone numbers.
+                        contactList.add(ContactItem("$id-$number", name, number))
                     }
                 }
             }

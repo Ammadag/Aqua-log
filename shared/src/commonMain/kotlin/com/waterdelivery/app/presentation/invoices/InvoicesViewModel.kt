@@ -2,6 +2,7 @@ package com.waterdelivery.app.presentation.invoices
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.waterdelivery.app.domain.repository.CustomerRepository
 import com.waterdelivery.app.domain.repository.InvoiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,17 +12,32 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class InvoicesViewModel(
-    private val invoiceRepository: InvoiceRepository
+    private val invoiceRepository: InvoiceRepository,
+    private val customerRepository: CustomerRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     
     val uiState: StateFlow<InvoicesUiState> = combine(
         invoiceRepository.getAllInvoices(),
+        customerRepository.getAllCustomers(),
         _searchQuery
-    ) { invoices, query ->
-        val filtered = if (query.isBlank()) invoices 
-                       else invoices.filter { it.invoiceNumber.contains(query, ignoreCase = true) || it.customerId.contains(query) }
+    ) { invoices, customers, query ->
+        val customerMap = customers.associateBy { it.id }
+        
+        val items = invoices.map { invoice ->
+            InvoiceItemUiModel(
+                invoice = invoice,
+                customerName = customerMap[invoice.customerId]?.name ?: "Unknown Customer"
+            )
+        }
+
+        val filtered = if (query.isBlank()) items 
+                       else items.filter { 
+                           it.invoice.invoiceNumber.contains(query, ignoreCase = true) || 
+                           it.customerName.contains(query, ignoreCase = true) 
+                       }
+        
         InvoicesUiState(
             invoices = filtered,
             searchQuery = query,

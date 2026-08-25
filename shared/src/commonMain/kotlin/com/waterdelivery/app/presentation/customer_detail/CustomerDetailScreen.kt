@@ -52,6 +52,7 @@ fun CustomerDetailScreen(
     viewModel: CustomerDetailViewModel,
     onNavigateToAddDelivery: (String) -> Unit,
     onNavigateToGenerateInvoice: (String) -> Unit,
+    onNavigateToDeliveryHistory: (String) -> Unit,
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -93,6 +94,7 @@ fun CustomerDetailScreen(
                                 onNavigateToGenerateInvoice(invoiceId)
                             }
                         },
+                        onViewAllHistory = { onNavigateToDeliveryHistory(summary.customer.id) },
                         onCallClick = viewModel::makeCall,
                         onWhatsAppClick = viewModel::openWhatsApp
                     )
@@ -108,6 +110,7 @@ private fun CustomerDetailContent(
     history: List<Delivery>,
     onAddDelivery: () -> Unit,
     onGenerateInvoice: () -> Unit,
+    onViewAllHistory: () -> Unit,
     onCallClick: () -> Unit,
     onWhatsAppClick: () -> Unit
 ) {
@@ -152,7 +155,7 @@ private fun CustomerDetailContent(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                TextButton(onClick = {}) {
+                TextButton(onClick = onViewAllHistory) {
                     Text(
                         "View All",
                         style = MaterialTheme.typography.bodySmall,
@@ -358,7 +361,7 @@ private fun BottleSummarySection(delivered: Int, returned: Int, balance: Int) {
                     label = "Balance",
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.secondary
                 )
             }
         }

@@ -22,6 +22,8 @@ import com.waterdelivery.app.presentation.customer_detail.CustomerDetailScreen
 import com.waterdelivery.app.presentation.customer_detail.CustomerDetailViewModel
 import com.waterdelivery.app.presentation.customers.CustomersScreen
 import com.waterdelivery.app.presentation.customers.CustomersViewModel
+import com.waterdelivery.app.presentation.delivery_history.DeliveryHistoryScreen
+import com.waterdelivery.app.presentation.delivery_history.DeliveryHistoryViewModel
 import com.waterdelivery.app.presentation.dashboard.DashboardScreen
 import com.waterdelivery.app.presentation.dashboard.DashboardViewModel
 import com.waterdelivery.app.presentation.invoice_preview.InvoicePreviewScreen
@@ -110,6 +112,19 @@ fun AppNavHost(
                     viewModel = viewModel,
                     onNavigateToAddDelivery = { id -> navController.navigate(Screen.AddDelivery.createRoute(id)) },
                     onNavigateToGenerateInvoice = { id -> navController.navigate(Screen.InvoicePreview.createRoute(id)) },
+                    onNavigateToDeliveryHistory = { id -> navController.navigate(Screen.DeliveryHistory.createRoute(id)) },
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = Screen.DeliveryHistory.route,
+                arguments = listOf(navArgument("customerId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val customerId = backStackEntry.arguments?.getString("customerId") ?: ""
+                val viewModel: DeliveryHistoryViewModel = koinViewModel(parameters = { parametersOf(customerId) })
+                DeliveryHistoryScreen(
+                    viewModel = viewModel,
                     onBackClick = { navController.popBackStack() }
                 )
             }

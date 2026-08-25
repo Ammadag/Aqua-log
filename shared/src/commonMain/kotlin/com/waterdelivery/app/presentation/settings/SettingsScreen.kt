@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.waterdelivery.app.presentation.ui.components.AppPrimaryButton
@@ -78,7 +79,9 @@ fun SettingsScreen(
                 value = uiState.businessName,
                 onValueChange = viewModel::onBusinessNameChange,
                 label = { Text("Business Name") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             OutlinedTextField(
@@ -86,7 +89,11 @@ fun SettingsScreen(
                 onValueChange = viewModel::onPhoneChange,
                 label = { Text("Phone Number") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Done
+                ),
+                singleLine = true
             )
 
             OutlinedTextField(
@@ -94,7 +101,8 @@ fun SettingsScreen(
                 onValueChange = viewModel::onAddressChange,
                 label = { Text("Business Address") },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 2
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             HorizontalDivider(
@@ -110,14 +118,20 @@ fun SettingsScreen(
                 onValueChange = viewModel::onPriceChange,
                 label = { Text("Default Bottle Price (PKR)") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                singleLine = true
             )
 
             OutlinedTextField(
                 value = uiState.invoicePrefix,
                 onValueChange = viewModel::onPrefixChange,
                 label = { Text("Invoice Prefix (e.g., INV)") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             HorizontalDivider(

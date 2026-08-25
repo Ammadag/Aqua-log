@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -167,7 +168,8 @@ fun AddDeliveryScreen(
                 onValueChange = viewModel::onNotesChange,
                 label = { Text("Notes (Optional)") },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 2
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             Spacer(modifier = Modifier.height(Spacing.huge))
@@ -295,7 +297,10 @@ private fun PriceSummaryCard(
                     onValueChange = onPriceChange,
                     modifier = Modifier.size(width = 100.dp, height = 56.dp),
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp)
                 )

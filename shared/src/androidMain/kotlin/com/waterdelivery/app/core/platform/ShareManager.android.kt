@@ -53,11 +53,9 @@ class AndroidShareManager(private val context: Context) : ShareManager {
     }
 
     override fun shareFileViaWhatsApp(filePath: String, phoneNumber: String) {
-        Toast.makeText(context, "Preparing invoice...", Toast.LENGTH_SHORT).show()
 
         val file = File(filePath)
         if (!file.exists()) {
-            Toast.makeText(context, "Error: File not found", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -80,19 +78,16 @@ class AndroidShareManager(private val context: Context) : ShareManager {
         // Try regular WhatsApp first
         intent.setPackage("com.whatsapp")
         try {
-            Toast.makeText(context, "Opening WhatsApp...", Toast.LENGTH_SHORT).show()
             context.startActivity(intent)
             return
         } catch (e: Exception) {
             // Try WhatsApp Business
             intent.setPackage("com.whatsapp.w4b")
             try {
-                Toast.makeText(context, "Opening WhatsApp Business...", Toast.LENGTH_SHORT).show()
                 context.startActivity(intent)
                 return
             } catch (e2: Exception) {
                 // Fallback to regular sharing if neither is installed
-                Toast.makeText(context, "WhatsApp not found, opening share menu...", Toast.LENGTH_SHORT).show()
                 shareFile(filePath, "application/pdf")
             }
         }

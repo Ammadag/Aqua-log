@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.waterdelivery.app.presentation.ui.components.AppPrimaryButton
 import com.waterdelivery.app.presentation.ui.components.AppSecondaryButton
@@ -79,7 +80,8 @@ fun AddCustomerScreen(
                 onValueChange = viewModel::onNameChange,
                 label = { Text("Customer Name") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             OutlinedTextField(
@@ -87,7 +89,10 @@ fun AddCustomerScreen(
                 onValueChange = viewModel::onPhoneChange,
                 label = { Text("Phone Number") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Done
+                ),
                 singleLine = true
             )
 
@@ -96,7 +101,8 @@ fun AddCustomerScreen(
                 onValueChange = viewModel::onAddressChange,
                 label = { Text("Address") },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 3
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             OutlinedTextField(
@@ -104,7 +110,8 @@ fun AddCustomerScreen(
                 onValueChange = viewModel::onNotesChange,
                 label = { Text("Notes (Optional)") },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 2
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             Spacer(modifier = Modifier.weight(1f))

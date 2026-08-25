@@ -12,6 +12,9 @@ sealed class Screen(val route: String) {
     object AddDelivery : Screen("add_delivery?customerId={customerId}") {
         fun createRoute(customerId: String? = null) = if (customerId != null) "add_delivery?customerId=$customerId" else "add_delivery"
     }
+    object DeliveryHistory : Screen("delivery_history/{customerId}") {
+        fun createRoute(customerId: String) = "delivery_history/$customerId"
+    }
     object Invoices : Screen("invoices")
     object InvoicePreview : Screen("invoice_preview/{invoiceId}") {
         fun createRoute(invoiceId: String) = "invoice_preview/$invoiceId"

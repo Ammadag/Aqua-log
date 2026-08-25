@@ -75,7 +75,8 @@ fun InvoicesScreen(
                         ),
                         verticalArrangement = Arrangement.spacedBy(Spacing.medium)
                     ) {
-                        items(uiState.invoices, key = { it.id }) { invoice ->
+                        items(uiState.invoices, key = { it.invoice.id }) { item ->
+                            val invoice = item.invoice
                             val date = Instant.fromEpochMilliseconds(invoice.createdAt)
                                 .toLocalDateTime(TimeZone.currentSystemDefault())
                             val dateStr = "${date.dayOfMonth} ${date.month.name.take(3)} ${date.year}"
@@ -84,7 +85,7 @@ fun InvoicesScreen(
                                 invoiceNumber = invoice.invoiceNumber,
                                 date = dateStr,
                                 amount = invoice.totalAmount,
-                                customerName = "Customer ID: ${invoice.customerId}",
+                                customerName = item.customerName,
                                 onClick = { onInvoiceClick(invoice.id) }
                             )
                         }
