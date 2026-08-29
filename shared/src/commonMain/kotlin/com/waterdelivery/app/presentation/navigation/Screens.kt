@@ -2,6 +2,7 @@ package com.waterdelivery.app.presentation.navigation
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
+    object Onboarding : Screen("onboarding")
     object Dashboard : Screen("dashboard")
     object Customers : Screen("customers")
     object CustomerDetail : Screen("customer_detail/{customerId}") {

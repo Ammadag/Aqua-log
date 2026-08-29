@@ -1,12 +1,14 @@
 package com.waterdelivery.app.di
 
 import com.waterdelivery.app.domain.usecase.AddCustomerUseCase
+import com.waterdelivery.app.domain.usecase.DeleteInvoiceUseCase
 import com.waterdelivery.app.domain.usecase.GenerateInvoiceUseCase
 import com.waterdelivery.app.domain.usecase.GetCustomerSummaryUseCase
 import com.waterdelivery.app.domain.usecase.GetDeliveryHistoryUseCase
 import com.waterdelivery.app.domain.usecase.GetDashboardStatsUseCase
 import com.waterdelivery.app.domain.usecase.RecordDeliveryUseCase
 import com.waterdelivery.app.domain.usecase.SearchCustomersUseCase
+import com.waterdelivery.app.domain.usecase.TogglePinInvoiceUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -17,4 +19,6 @@ val useCaseModule = module {
     factory { GetDashboardStatsUseCase(get(), get()) }
     factory { AddCustomerUseCase(get()) }
     factory { SearchCustomersUseCase(get()) }
+    factory { DeleteInvoiceUseCase(get()) }
+    factory { TogglePinInvoiceUseCase(get()) }
 }

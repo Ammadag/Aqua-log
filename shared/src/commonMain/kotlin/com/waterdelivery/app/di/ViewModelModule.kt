@@ -9,6 +9,7 @@ import com.waterdelivery.app.presentation.dashboard.DashboardViewModel
 import com.waterdelivery.app.presentation.delivery_history.DeliveryHistoryViewModel
 import com.waterdelivery.app.presentation.invoice_preview.InvoicePreviewViewModel
 import com.waterdelivery.app.presentation.invoices.InvoicesViewModel
+import com.waterdelivery.app.presentation.onboarding.OnboardingViewModel
 import com.waterdelivery.app.presentation.settings.SettingsViewModel
 import org.koin.dsl.module
 
@@ -18,9 +19,10 @@ val viewModelModule = module {
     factory { AddCustomerViewModel(get()) }
     factory { ContactPickerViewModel(get()) }
     factory { (customerId: String?) -> AddDeliveryViewModel(get(), get(), get(), customerId) }
-    factory { (customerId: String) -> CustomerDetailViewModel(get(), get(), get(), get(), customerId) }
+    factory { (customerId: String) -> CustomerDetailViewModel(get(), get(), get(), get(), get(), customerId) }
     factory { (customerId: String) -> DeliveryHistoryViewModel(customerId, get(), get()) }
-    factory { InvoicesViewModel(get(), get()) }
+    factory { InvoicesViewModel(get(), get(), get(), get()) }
     factory { (invoiceId: String) -> InvoicePreviewViewModel(get(), get(), get(), get(), get(), get(), invoiceId) }
-    factory { SettingsViewModel(get()) }
+    factory { SettingsViewModel(get(), get()) }
+    factory { OnboardingViewModel(get(), get()) }
 }

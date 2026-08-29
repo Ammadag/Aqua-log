@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waterdelivery.app.domain.model.BusinessProfile
 import com.waterdelivery.app.domain.repository.BusinessProfileRepository
+import com.waterdelivery.app.core.platform.ImageStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val profileRepository: BusinessProfileRepository
+    private val profileRepository: BusinessProfileRepository,
+    private val imageStorage: ImageStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -35,6 +37,8 @@ class SettingsViewModel(
                             address = profile.address,
                             defaultPrice = profile.defaultPricePerBottle.toInt().toString(),
                             invoicePrefix = profile.invoicePrefix,
+                            logoPath = profile.logoPath,
+                            isOnboardingCompleted = profile.isOnboardingCompleted,
                             isLoading = false
                         )
                     }
@@ -54,6 +58,15 @@ class SettingsViewModel(
     fun onPriceChange(price: String) { _uiState.update { it.copy(defaultPrice = price) } }
     fun onPrefixChange(prefix: String) { _uiState.update { it.copy(invoicePrefix = prefix) } }
 
+    fun onLogoSelected(uriString: String) {
+        viewModelScope.launch {
+            val path = imageStorage.saveImage(uriString)
+            if (path != null) {
+                _uiState.update { it.copy(logoPath = path) }
+            }
+        }
+    }
+
     fun saveSettings() {
         val state = _uiState.value
         viewModelScope.launch {
@@ -64,7 +77,9 @@ class SettingsViewModel(
                     phone = state.phone,
                     address = state.address,
                     defaultPricePerBottle = state.defaultPrice.toDoubleOrNull() ?: 0.0,
-                    invoicePrefix = state.invoicePrefix
+                    invoicePrefix = state.invoicePrefix,
+                    logoPath = state.logoPath,
+                    isOnboardingCompleted = state.isOnboardingCompleted
                 )
                 profileRepository.saveBusinessProfile(profile)
                 _uiState.update { it.copy(isSaving = false, isSavedSuccess = true) }

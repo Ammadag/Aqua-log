@@ -3,6 +3,7 @@ package com.waterdelivery.app.presentation.customer_detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.waterdelivery.app.core.platform.ShareManager
+import com.waterdelivery.app.domain.repository.BusinessProfileRepository
 import com.waterdelivery.app.domain.repository.DeliveryRepository
 import com.waterdelivery.app.domain.usecase.GenerateInvoiceUseCase
 import com.waterdelivery.app.domain.usecase.GetCustomerSummaryUseCase
@@ -25,6 +26,7 @@ class CustomerDetailViewModel(
     private val getCustomerSummaryUseCase: GetCustomerSummaryUseCase,
     private val generateInvoiceUseCase: GenerateInvoiceUseCase,
     private val deliveryRepository: DeliveryRepository,
+    private val profileRepository: BusinessProfileRepository,
     private val shareManager: ShareManager,
     private val customerId: String
 ) : ViewModel() {
@@ -39,12 +41,14 @@ class CustomerDetailViewModel(
     private fun loadCustomerDetails() {
         combine(
             getCustomerSummaryUseCase(customerId),
-            deliveryRepository.getDeliveriesForCustomer(customerId)
-        ) { summary, history ->
+            deliveryRepository.getDeliveriesForCustomer(customerId),
+            profileRepository.getBusinessProfile()
+        ) { summary, history, profile ->
             _uiState.update {
                 it.copy(
                     summary = summary,
                     deliveryHistory = history.take(10), // Recent 10
+                    businessProfile = profile,
                     isLoading = false
                 )
             }

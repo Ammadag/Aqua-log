@@ -21,4 +21,5 @@ data class InvoiceEntity(
     val totalReturned: Int,
     val totalAmount: Double,
     val createdAt: Long,
+    val isPinned: Boolean = false,
 )

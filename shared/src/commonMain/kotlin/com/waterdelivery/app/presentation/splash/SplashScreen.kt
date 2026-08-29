@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SplashScreen(
-    onNavigateToDashboard: () -> Unit
+    onFinish: () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val alpha by infiniteTransition.animateFloat(
@@ -43,7 +43,7 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
         delay(2000)
-        onNavigateToDashboard()
+        onFinish()
     }
 
     Box(

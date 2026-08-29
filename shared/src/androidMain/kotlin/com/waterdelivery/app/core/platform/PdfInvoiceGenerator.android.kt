@@ -1,10 +1,11 @@
 package com.waterdelivery.app.core.platform
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
@@ -14,7 +15,6 @@ import com.waterdelivery.app.domain.model.Delivery
 import com.waterdelivery.app.domain.model.Invoice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -67,92 +67,75 @@ class AndroidPdfInvoiceGenerator(
         deliveries: List<Delivery>
     ): String = withContext(Dispatchers.IO) {
         val pdfDocument = PdfDocument()
-        var pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pdfDocument.pages.size + 1).create()
+        var pageInfo =
+            PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pdfDocument.pages.size + 1).create()
         var page = pdfDocument.startPage(pageInfo)
         var canvas = page.canvas
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-        var y = 70f
-
-        // ---- Title + logo mark ----------------------------------------------
-        y = drawTitleAndLogo(canvas, paint, profile.businessName, y)
-
-        // ---- Meta block: Date / Billing Month / Name -------------------------
         val tz = TimeZone.currentSystemDefault()
-        val today = Clock.System.now().toLocalDateTime(tz)
-        val dateStr = "%02d/%02d/%04d".format(today.dayOfMonth, today.monthNumber, today.year)
+        var y = 60f
 
-        val billingMonthStr = if (deliveries.isNotEmpty()) {
-            val first = Instant.fromEpochMilliseconds(deliveries.first().date).toLocalDateTime(tz)
-            "${monthNames[first.monthNumber - 1]}, ${first.year}"
-        } else {
-            "${monthNames[today.monthNumber - 1]}, ${today.year}"
-        }
+        // ---- Business Header (Logo + Info) -----------------------------------
+        y = drawBusinessHeader(canvas, paint, profile, y)
 
-        y += 15f
-        y = drawLabelValue(canvas, paint, "Date:", dateStr, marginLeft, y)
-        y = drawLabelValue(canvas, paint, "Billing Month:", billingMonthStr, marginLeft, y)
-        y = drawLabelValue(canvas, paint, "Name:", customer.name, marginLeft, y)
+        y += 10f
+        // ---- Invoice Meta (Number + Date) ------------------------------------
+        y = drawInvoiceMeta(canvas, paint, invoice, y)
 
-        y += 25f
+        y += 20f
+        // ---- Bill To Section -------------------------------------------------
+        y = drawBillTo(canvas, paint, customer, y)
 
-        // ---- Deliveries table --------------------------------------------------
+        y += 30f
+        // ---- Deliveries Table ------------------------------------------------
         y = drawTableHeader(canvas, paint, y)
 
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        paint.textSize = 12f
+        paint.textSize = 11f
         paint.color = black
 
         deliveries.forEach { delivery ->
             if (y > rowBottomLimit) {
-                // finish current page, start a new one, redraw the header
                 pdfDocument.finishPage(page)
-                pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pdfDocument.pages.size + 1).create()
+                pageInfo =
+                    PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pdfDocument.pages.size + 1)
+                        .create()
                 page = pdfDocument.startPage(pageInfo)
                 canvas = page.canvas
                 y = 60f
                 y = drawTableHeader(canvas, paint, y)
                 paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-                paint.textSize = 12f
+                paint.textSize = 11f
                 paint.color = black
             }
 
             val date = Instant.fromEpochMilliseconds(delivery.date).toLocalDateTime(tz)
-            val dateCell = "${date.dayOfMonth}/${date.monthNumber}/${date.year}"
+            val dateCell = "${date.dayOfMonth}/${date.monthNumber}"
 
             paint.textAlign = Paint.Align.LEFT
-            canvas.drawText(dateCell, colDate, y, paint)
-            canvas.drawText("${delivery.deliveredQuantity}", colDelivered, y, paint)
-            canvas.drawText("${delivery.returnedQuantity}", colReturned, y, paint)
+            canvas.drawText(dateCell, colDate + 5f, y, paint)
+
+            paint.textAlign = Paint.Align.CENTER
+            canvas.drawText("${delivery.deliveredQuantity}", colDelivered + 25f, y, paint)
+            canvas.drawText("${delivery.returnedQuantity}", colReturned + 25f, y, paint)
 
             paint.textAlign = Paint.Align.RIGHT
-            canvas.drawText("PKR ${delivery.totalAmount.toInt()}", colAmount, y, paint)
+            canvas.drawText("${delivery.totalAmount.toInt()}", colAmount - 5f, y, paint)
             paint.textAlign = Paint.Align.LEFT
 
-            y += 22f
+            y += 20f
         }
 
         // bottom rule under the last row
         canvas.drawLine(marginLeft, y, marginRight, y, paint)
-        y += 12f
+        y += 20f
 
-        // ---- Grand total, boxed like the sample -------------------------------
-        val totalRowTop = y
-        y += 26f
-        canvas.drawLine(marginLeft, totalRowTop, marginRight, totalRowTop, paint)
-        canvas.drawLine(marginLeft, y, marginRight, y, paint)
+        // ---- Financial Summary ------------------------------------------------
+        y = drawFinancialSummary(canvas, paint, invoice, y)
 
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        paint.textSize = 13f
-        paint.textAlign = Paint.Align.LEFT
-        canvas.drawText("Grand Total:", 350f, totalRowTop + 18f, paint)
-        paint.textAlign = Paint.Align.RIGHT
-        canvas.drawText("PKR ${invoice.totalAmount.toInt()}", colAmount, totalRowTop + 18f, paint)
-        paint.textAlign = Paint.Align.LEFT
-
-        y += 45f
-
-        // ---- Footer -------------------------------------------------------------
+        y += 40f
+        // ---- Footer -----------------------------------------------------------
         drawFooter(canvas, paint, profile, y)
 
         pdfDocument.finishPage(page)
@@ -171,111 +154,231 @@ class AndroidPdfInvoiceGenerator(
 
     // ---- Drawing helpers ------------------------------------------------------
 
-    /** Draws the "INVOICE" title (bold, underlined) and a simple vector logo mark top-right. */
-    private fun drawTitleAndLogo(canvas: android.graphics.Canvas, paint: Paint, businessName: String, startY: Float): Float {
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        paint.textSize = 26f
-        paint.color = black
-        paint.textAlign = Paint.Align.LEFT
-        canvas.drawText("INVOICE", marginLeft, startY, paint)
-        val titleWidth = paint.measureText("INVOICE")
-        paint.strokeWidth = 1.5f
-        canvas.drawLine(marginLeft, startY + 5f, marginLeft + titleWidth, startY + 5f, paint)
+    private fun drawBusinessHeader(
+        canvas: android.graphics.Canvas,
+        paint: Paint,
+        profile: BusinessProfile,
+        startY: Float
+    ): Float {
+        var currentY = startY
+        val logoSize = 60f
 
-        // Simple vector logo mark (circle + droplet) since no image asset is available.
-        // Swap this block for canvas.drawBitmap(logoBitmap, ...) if you have a real logo PNG.
-        val logoCx = marginRight - 20f
-        val logoCy = startY - 15f
-        val logoR = 20f
+        // Logo on the left
+        if (profile.logoPath != null && File(profile.logoPath).exists()) {
+            try {
+                val logoBitmap = BitmapFactory.decodeFile(profile.logoPath)
+                if (logoBitmap != null) {
+                    val scaled = Bitmap.createScaledBitmap(
+                        logoBitmap,
+                        logoSize.toInt(),
+                        logoSize.toInt(),
+                        true
+                    )
+                    canvas.drawBitmap(scaled, marginLeft, startY, paint)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
-        val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = brandBlue
-            style = Paint.Style.STROKE
-            strokeWidth = 3f
-        }
-        canvas.drawCircle(logoCx, logoCy, logoR, ringPaint)
-
-        val dropPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = brandBlue
-            style = Paint.Style.FILL
-        }
-        val drop = Path().apply {
-            moveTo(logoCx, logoCy - logoR * 0.55f)
-            cubicTo(
-                logoCx + logoR * 0.55f, logoCy - logoR * 0.05f,
-                logoCx + logoR * 0.35f, logoCy + logoR * 0.55f,
-                logoCx, logoCy + logoR * 0.55f
-            )
-            cubicTo(
-                logoCx - logoR * 0.35f, logoCy + logoR * 0.55f,
-                logoCx - logoR * 0.55f, logoCy - logoR * 0.05f,
-                logoCx, logoCy - logoR * 0.55f
-            )
-            close()
-        }
-        canvas.drawPath(drop, dropPaint)
+        // Business details stacked on the right (or next to logo)
+        val textX = if (profile.logoPath != null) marginLeft + logoSize + 15f else marginLeft
 
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        paint.textSize = 11f
+        paint.textSize = 20f
         paint.color = brandBlue
-        paint.textAlign = Paint.Align.CENTER
-        canvas.drawText(businessName, logoCx, logoCy + logoR + 16f, paint)
         paint.textAlign = Paint.Align.LEFT
+        canvas.drawText(profile.businessName.uppercase(), textX, currentY + 20f, paint)
 
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint.textSize = 10f
+        paint.color = Color.DKGRAY
+        canvas.drawText(profile.address, textX, currentY + 38f, paint)
+        canvas.drawText("Phone: ${profile.phone}", textX, currentY + 52f, paint)
+
+        return startY + logoSize + 10f
+    }
+
+    private fun drawInvoiceMeta(
+        canvas: android.graphics.Canvas,
+        paint: Paint,
+        invoice: Invoice,
+        startY: Float
+    ): Float {
+        val tz = TimeZone.currentSystemDefault()
+        // Left: Invoice Number
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint.textSize = 10f
+        paint.color = Color.GRAY
+        canvas.drawText("Invoice Number", marginLeft, startY, paint)
+
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        paint.textSize = 12f
+        paint.color = black
+        canvas.drawText(invoice.invoiceNumber, marginLeft, startY + 18f, paint)
+
+        // Period below Invoice Number
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint.textSize = 9f
+        paint.color = Color.DKGRAY
+        val startD = Instant.fromEpochMilliseconds(invoice.startDate).toLocalDateTime(tz)
+        val endD = Instant.fromEpochMilliseconds(invoice.endDate).toLocalDateTime(tz)
+        val periodStr = "Period: %02d %s %d – %02d %s %d".format(
+            startD.dayOfMonth, monthNames[startD.monthNumber - 1].take(3), startD.year,
+            endD.dayOfMonth, monthNames[endD.monthNumber - 1].take(3), endD.year
+        )
+        canvas.drawText(periodStr, marginLeft, startY + 32f, paint)
+
+        // Right: Issue Date
+        val date = Instant.fromEpochMilliseconds(invoice.createdAt).toLocalDateTime(tz)
+        val dateStr = "${date.dayOfMonth} ${monthNames[date.monthNumber - 1].take(3)} ${date.year}"
+
+        paint.textAlign = Paint.Align.RIGHT
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint.color = Color.GRAY
+        paint.textSize = 10f
+        canvas.drawText("Issue Date", marginRight, startY, paint)
+
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        paint.color = black
+        paint.textSize = 12f
+        canvas.drawText(dateStr, marginRight, startY + 18f, paint)
+
+        paint.textAlign = Paint.Align.LEFT
         return startY + 45f
     }
 
-    /** Draws "Label: value" with the label bold and the value underlined, sample-style. */
-    private fun drawLabelValue(canvas: android.graphics.Canvas, paint: Paint, label: String, value: String, x: Float, y: Float): Float {
+    private fun drawBillTo(
+        canvas: android.graphics.Canvas,
+        paint: Paint,
+        customer: Customer,
+        startY: Float
+    ): Float {
+        val rect = RectF(marginLeft, startY, marginRight, startY + 75f)
+        val fillPaint = Paint().apply {
+            color = headerFill
+            style = Paint.Style.FILL
+        }
+        canvas.drawRect(rect, fillPaint)
+
+        val padding = 12f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        paint.textSize = 10f
+        paint.color = Color.GRAY
+        canvas.drawText("BILL TO", marginLeft + padding, startY + 20f, paint)
+
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         paint.textSize = 13f
         paint.color = black
+        canvas.drawText(customer.name, marginLeft + padding, startY + 40f, paint)
+
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint.textSize = 10f
+        paint.color = Color.DKGRAY
+        canvas.drawText(customer.address, marginLeft + padding, startY + 56f, paint)
+        canvas.drawText(customer.phoneNumber, marginLeft + padding, startY + 70f, paint)
+
+        return startY + 85f
+    }
+
+    private fun drawFinancialSummary(
+        canvas: android.graphics.Canvas,
+        paint: Paint,
+        invoice: Invoice,
+        startY: Float
+    ): Float {
+        var currentY = startY
+        val labelX = marginRight - 180f
+
+        paint.textSize = 11f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint.color = Color.DKGRAY
+
+        fun drawRow(label: String, value: String) {
+            paint.textAlign = Paint.Align.LEFT
+            canvas.drawText(label, labelX, currentY, paint)
+            paint.textAlign = Paint.Align.RIGHT
+            canvas.drawText(value, marginRight, currentY, paint)
+            currentY += 18f
+        }
+
+        drawRow("Total Delivered:", "${invoice.totalDelivered} Bottles")
+        drawRow("Total Returned:", "${invoice.totalReturned} Empties")
+        drawRow("Net Balance:", "${invoice.totalDelivered - invoice.totalReturned} Bottles")
+
+        currentY += 10f
+
+        // Grand Total Box
+        val boxRect = RectF(marginRight - 200f, currentY - 15f, marginRight, currentY + 30f)
+        val boxPaint = Paint().apply {
+            color = brandBlue
+            style = Paint.Style.FILL
+        }
+        canvas.drawRect(boxRect, boxPaint)
+
+        paint.color = Color.WHITE
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        paint.textSize = 14f
         paint.textAlign = Paint.Align.LEFT
-        canvas.drawText(label, x, y, paint)
-        val labelWidth = paint.measureText("$label ")
+        canvas.drawText("Grand Total", marginRight - 190f, currentY + 12f, paint)
 
-        val valueX = x + labelWidth
-        canvas.drawText(value, valueX, y, paint)
-        val valueWidth = paint.measureText(value)
-        paint.strokeWidth = 1f
-        canvas.drawLine(valueX, y + 3f, valueX + valueWidth, y + 3f, paint)
+        paint.textAlign = Paint.Align.RIGHT
+        canvas.drawText(
+            "Rs. ${invoice.totalAmount.toInt()}",
+            marginRight - 10f,
+            currentY + 12f,
+            paint
+        )
 
-        return y + 20f
+        paint.textAlign = Paint.Align.LEFT
+        return currentY + 50f
     }
 
     /** Draws the shaded table header row and returns the y for the first data row. */
-    private fun drawTableHeader(canvas: android.graphics.Canvas, paint: Paint, startY: Float): Float {
+    private fun drawTableHeader(
+        canvas: android.graphics.Canvas,
+        paint: Paint,
+        startY: Float
+    ): Float {
         val headerTop = startY
         val headerBottom = startY + 24f
 
         val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = headerFill
+            color = Color.rgb(240, 240, 240)
             style = Paint.Style.FILL
         }
         canvas.drawRect(RectF(marginLeft, headerTop - 16f, marginRight, headerBottom), fillPaint)
 
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        paint.textSize = 12f
+        paint.textSize = 11f
         paint.color = black
         val textY = headerTop
 
         paint.textAlign = Paint.Align.LEFT
-        canvas.drawText("Date", colDate, textY, paint)
-        canvas.drawText("Delivered", colDelivered, textY, paint)
-        canvas.drawText("Returned", colReturned, textY, paint)
+        canvas.drawText("Date", colDate + 5f, textY, paint)
+
+        paint.textAlign = Paint.Align.CENTER
+        canvas.drawText("Delivered", colDelivered + 25f, textY, paint)
+        canvas.drawText("Returned", colReturned + 25f, textY, paint)
+
         paint.textAlign = Paint.Align.RIGHT
-        canvas.drawText("Amount (Rs.)", colAmount, textY, paint)
+        canvas.drawText("Amount (Rs.)", colAmount - 5f, textY, paint)
         paint.textAlign = Paint.Align.LEFT
 
         paint.strokeWidth = 1f
         canvas.drawLine(marginLeft, headerTop - 16f, marginRight, headerTop - 16f, paint)
         canvas.drawLine(marginLeft, headerBottom, marginRight, headerBottom, paint)
 
-        return headerBottom + 22f
+        return headerBottom + 20f
     }
 
     /** Draws the "settle your bill" line, THANK YOU, dashed rule, and contact footer. */
-    private fun drawFooter(canvas: android.graphics.Canvas, paint: Paint, profile: BusinessProfile, startY: Float) {
+    private fun drawFooter(
+        canvas: android.graphics.Canvas,
+        paint: Paint,
+        profile: BusinessProfile,
+        startY: Float
+    ) {
         var y = startY
 
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)

@@ -7,4 +7,9 @@ data class BusinessProfile(
     val address: String,
     val defaultPricePerBottle: Double,
     val invoicePrefix: String = "INV",
-)
+    val logoPath: String? = null,
+    val isOnboardingCompleted: Boolean = false
+) {
+    val isConfigured: Boolean
+        get() = businessName.isNotBlank() && phone.isNotBlank()
+}

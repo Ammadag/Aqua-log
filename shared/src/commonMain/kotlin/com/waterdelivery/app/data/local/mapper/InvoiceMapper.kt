@@ -13,6 +13,7 @@ fun InvoiceEntity.toDomain(): Invoice = Invoice(
     totalReturned = totalReturned,
     totalAmount = totalAmount,
     createdAt = createdAt,
+    isPinned = isPinned,
 )
 
 fun Invoice.toEntity(): InvoiceEntity = InvoiceEntity(
@@ -25,4 +26,5 @@ fun Invoice.toEntity(): InvoiceEntity = InvoiceEntity(
     totalReturned = totalReturned,
     totalAmount = totalAmount,
     createdAt = createdAt,
+    isPinned = isPinned,
 )

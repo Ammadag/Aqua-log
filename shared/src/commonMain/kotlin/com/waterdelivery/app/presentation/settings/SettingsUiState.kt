@@ -9,6 +9,8 @@ data class SettingsUiState(
     val isSaving: Boolean = false,
     val isSavedSuccess: Boolean = false,
     val appVersion: String = "1.0.0",
+    val logoPath: String? = null,
+    val isOnboardingCompleted: Boolean = true,
     val errorMessage: String? = null,
     val isLoading: Boolean = true
 )

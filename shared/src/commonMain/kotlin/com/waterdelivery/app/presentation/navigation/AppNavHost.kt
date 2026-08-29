@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -30,18 +31,26 @@ import com.waterdelivery.app.presentation.invoice_preview.InvoicePreviewScreen
 import com.waterdelivery.app.presentation.invoice_preview.InvoicePreviewViewModel
 import com.waterdelivery.app.presentation.invoices.InvoicesScreen
 import com.waterdelivery.app.presentation.invoices.InvoicesViewModel
+import com.waterdelivery.app.presentation.onboarding.OnboardingScreen
+import com.waterdelivery.app.presentation.onboarding.OnboardingViewModel
 import com.waterdelivery.app.presentation.settings.SettingsScreen
 import com.waterdelivery.app.presentation.settings.SettingsViewModel
 import com.waterdelivery.app.presentation.splash.SplashScreen
+import com.waterdelivery.app.domain.repository.BusinessProfileRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AppNavHost(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    profileRepository: BusinessProfileRepository = koinInject()
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val scope = rememberCoroutineScope()
 
     val topLevelRoutes = listOf(
         Screen.Dashboard.route,
@@ -73,9 +82,29 @@ fun AppNavHost(
         ) {
             composable(Screen.Splash.route) {
                 SplashScreen(
+                    onFinish = {
+                        scope.launch {
+                            val profile = profileRepository.getBusinessProfile().first()
+                            val route = if (profile?.isOnboardingCompleted == true) {
+                                Screen.Dashboard.route
+                            } else {
+                                Screen.Onboarding.route
+                            }
+                            navController.navigate(route) {
+                                popUpTo(Screen.Splash.route) { inclusive = true }
+                            }
+                        }
+                    }
+                )
+            }
+
+            composable(Screen.Onboarding.route) {
+                val viewModel: OnboardingViewModel = koinViewModel()
+                OnboardingScreen(
+                    viewModel = viewModel,
                     onNavigateToDashboard = {
                         navController.navigate(Screen.Dashboard.route) {
-                            popUpTo(Screen.Splash.route) { inclusive = true }
+                            popUpTo(Screen.Onboarding.route) { inclusive = true }
                         }
                     }
                 )
@@ -86,8 +115,6 @@ fun AppNavHost(
                 DashboardScreen(
                     viewModel = viewModel,
                     onNavigateToAddDelivery = { navController.navigate(Screen.AddDelivery.createRoute()) },
-                    onNavigateToCustomers = { navController.navigate(Screen.Customers.route) },
-                    onNavigateToInvoices = { navController.navigate(Screen.Invoices.route) },
                     onCustomerClick = { id -> navController.navigate(Screen.CustomerDetail.createRoute(id)) }
                 )
             }
@@ -113,6 +140,7 @@ fun AppNavHost(
                     onNavigateToAddDelivery = { id -> navController.navigate(Screen.AddDelivery.createRoute(id)) },
                     onNavigateToGenerateInvoice = { id -> navController.navigate(Screen.InvoicePreview.createRoute(id)) },
                     onNavigateToDeliveryHistory = { id -> navController.navigate(Screen.DeliveryHistory.createRoute(id)) },
+                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                     onBackClick = { navController.popBackStack() }
                 )
             }
@@ -201,6 +229,7 @@ fun AppNavHost(
                 val viewModel: InvoicePreviewViewModel = koinViewModel(parameters = { parametersOf(invoiceId) })
                 InvoicePreviewScreen(
                     viewModel = viewModel,
+                    onNavigateToSettings = { navController.navigate(Screen.Settings.route) },
                     onBackClick = { navController.popBackStack() }
                 )
             }

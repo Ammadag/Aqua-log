@@ -19,17 +19,8 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,9 +44,34 @@ fun CustomerDetailScreen(
     onNavigateToAddDelivery: (String) -> Unit,
     onNavigateToGenerateInvoice: (String) -> Unit,
     onNavigateToDeliveryHistory: (String) -> Unit,
+    onNavigateToSettings: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showMissingProfileDialog by remember { mutableStateOf(false) }
+
+    if (showMissingProfileDialog) {
+        AlertDialog(
+            onDismissRequest = { showMissingProfileDialog = false },
+            title = { Text("Business Details Required") },
+            text = { Text("Please add your business details in the settings section to generate PDF invoices.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMissingProfileDialog = false
+                        onNavigateToSettings()
+                    }
+                ) {
+                    Text("Go to Settings")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMissingProfileDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -90,8 +106,12 @@ fun CustomerDetailScreen(
                         history = uiState.deliveryHistory,
                         onAddDelivery = { onNavigateToAddDelivery(summary.customer.id) },
                         onGenerateInvoice = {
-                            viewModel.generateInvoiceForCurrentMonth { invoiceId ->
-                                onNavigateToGenerateInvoice(invoiceId)
+                            if (uiState.businessProfile?.isConfigured == true) {
+                                viewModel.generateInvoiceForCurrentMonth { invoiceId ->
+                                    onNavigateToGenerateInvoice(invoiceId)
+                                }
+                            } else {
+                                showMissingProfileDialog = true
                             }
                         },
                         onViewAllHistory = { onNavigateToDeliveryHistory(summary.customer.id) },

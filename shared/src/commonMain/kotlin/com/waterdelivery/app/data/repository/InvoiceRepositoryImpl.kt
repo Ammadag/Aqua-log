@@ -31,4 +31,12 @@ class InvoiceRepositoryImpl(
     override suspend fun getInvoiceById(id: String): Invoice? {
         return invoiceDao.getInvoiceById(id)?.toDomain()
     }
+
+    override suspend fun togglePinInvoice(id: String, isPinned: Boolean) {
+        invoiceDao.updatePinStatus(id, isPinned)
+    }
+
+    override suspend fun deleteInvoice(id: String) {
+        invoiceDao.deleteInvoiceById(id)
+    }
 }

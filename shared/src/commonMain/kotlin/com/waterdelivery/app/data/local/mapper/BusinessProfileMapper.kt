@@ -10,6 +10,8 @@ fun BusinessProfileEntity.toDomain(): BusinessProfile = BusinessProfile(
     address = address,
     defaultPricePerBottle = defaultPricePerBottle,
     invoicePrefix = invoicePrefix,
+    logoPath = logoPath,
+    isOnboardingCompleted = isOnboardingCompleted
 )
 
 fun BusinessProfile.toEntity(): BusinessProfileEntity = BusinessProfileEntity(
@@ -19,4 +21,6 @@ fun BusinessProfile.toEntity(): BusinessProfileEntity = BusinessProfileEntity(
     address = address,
     defaultPricePerBottle = defaultPricePerBottle,
     invoicePrefix = invoicePrefix,
+    logoPath = logoPath,
+    isOnboardingCompleted = isOnboardingCompleted
 )

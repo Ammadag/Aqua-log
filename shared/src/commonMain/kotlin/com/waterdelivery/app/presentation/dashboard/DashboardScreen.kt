@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,7 +35,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.waterdelivery.app.presentation.ui.components.AppPrimaryButton
-import com.waterdelivery.app.presentation.ui.components.AppSecondaryButton
 import com.waterdelivery.app.presentation.ui.components.AppTopBar
 import com.waterdelivery.app.presentation.ui.components.CustomerCard
 import com.waterdelivery.app.presentation.ui.theme.Spacing
@@ -45,8 +43,6 @@ import com.waterdelivery.app.presentation.ui.theme.Spacing
 fun DashboardScreen(
     viewModel: DashboardViewModel,
     onNavigateToAddDelivery: () -> Unit,
-    onNavigateToCustomers: () -> Unit,
-    onNavigateToInvoices: () -> Unit,
     onCustomerClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -73,8 +69,6 @@ fun DashboardScreen(
                 DashboardContent(
                     uiState = uiState,
                     onNavigateToAddDelivery = onNavigateToAddDelivery,
-                    onNavigateToCustomers = onNavigateToCustomers,
-                    onNavigateToInvoices = onNavigateToInvoices,
                     onCustomerClick = onCustomerClick
                 )
             }
@@ -86,8 +80,6 @@ fun DashboardScreen(
 private fun DashboardContent(
     uiState: DashboardUiState,
     onNavigateToAddDelivery: () -> Unit,
-    onNavigateToCustomers: () -> Unit,
-    onNavigateToInvoices: () -> Unit,
     onCustomerClick: (String) -> Unit
 ) {
     LazyColumn(
@@ -111,14 +103,12 @@ private fun DashboardContent(
 
         item {
             QuickActions(
-                onAddDelivery = onNavigateToAddDelivery,
-                onCustomers = onNavigateToCustomers,
-                onInvoices = onNavigateToInvoices
+                onAddDelivery = onNavigateToAddDelivery
             )
         }
 
         item {
-            RecentCustomersHeader(onViewAll = onNavigateToCustomers)
+            RecentCustomersHeader()
         }
 
         items(uiState.recentCustomers, key = { it.id }) { customer ->
@@ -286,35 +276,16 @@ private fun SummaryCardSmall(
 
 @Composable
 private fun QuickActions(
-    onAddDelivery: () -> Unit,
-    onCustomers: () -> Unit,
-    onInvoices: () -> Unit
+    onAddDelivery: () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.medium)) {
-        AppPrimaryButton(
-            text = "ADD DELIVERY",
-            onClick = onAddDelivery
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
-        ) {
-            AppSecondaryButton(
-                text = "Customers",
-                onClick = onCustomers,
-                modifier = Modifier.weight(1f)
-            )
-            AppSecondaryButton(
-                text = "Invoices",
-                onClick = onInvoices,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
+    AppPrimaryButton(
+        text = "ADD DELIVERY",
+        onClick = onAddDelivery
+    )
 }
 
 @Composable
-private fun RecentCustomersHeader(onViewAll: () -> Unit) {
+private fun RecentCustomersHeader() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -325,13 +296,5 @@ private fun RecentCustomersHeader(onViewAll: () -> Unit) {
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
-        TextButton(onClick = onViewAll) {
-            Text(
-                text = "View All",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
     }
 }

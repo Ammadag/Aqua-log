@@ -6,6 +6,7 @@ import com.waterdelivery.app.data.local.mapper.toEntity
 import com.waterdelivery.app.domain.model.BusinessProfile
 import com.waterdelivery.app.domain.repository.BusinessProfileRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class BusinessProfileRepositoryImpl(
@@ -18,5 +19,21 @@ class BusinessProfileRepositoryImpl(
 
     override suspend fun saveBusinessProfile(profile: BusinessProfile) {
         businessProfileDao.insertOrUpdateProfile(profile.toEntity())
+    }
+
+    override suspend fun setOnboardingCompleted(completed: Boolean) {
+        val currentProfile = businessProfileDao.getBusinessProfile().first()?.toDomain()
+        val updatedProfile = if (currentProfile != null) {
+            currentProfile.copy(isOnboardingCompleted = completed)
+        } else {
+            BusinessProfile(
+                businessName = "",
+                phone = "",
+                address = "",
+                defaultPricePerBottle = 80.0,
+                isOnboardingCompleted = completed
+            )
+        }
+        businessProfileDao.insertOrUpdateProfile(updatedProfile.toEntity())
     }
 }

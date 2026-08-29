@@ -11,4 +11,6 @@ data class BusinessProfileEntity(
     val address: String,
     val defaultPricePerBottle: Double,
     val invoicePrefix: String,
+    val logoPath: String? = null,
+    val isOnboardingCompleted: Boolean = false
 )

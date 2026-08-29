@@ -9,20 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.waterdelivery.app.domain.model.BusinessProfile
@@ -31,6 +27,7 @@ import com.waterdelivery.app.domain.model.Delivery
 import com.waterdelivery.app.domain.model.Invoice
 import com.waterdelivery.app.presentation.ui.components.AppPrimaryButton
 import com.waterdelivery.app.presentation.ui.components.AppTopBar
+import com.waterdelivery.app.presentation.ui.components.LocalImage
 import com.waterdelivery.app.presentation.ui.theme.Spacing
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -39,9 +36,34 @@ import kotlinx.datetime.toLocalDateTime
 @Composable
 fun InvoicePreviewScreen(
     viewModel: InvoicePreviewViewModel,
+    onNavigateToSettings: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showMissingProfileDialog by remember { mutableStateOf(false) }
+
+    if (showMissingProfileDialog) {
+        AlertDialog(
+            onDismissRequest = { showMissingProfileDialog = false },
+            title = { Text("Business Details Required") },
+            text = { Text("Please add your business details in the settings section to generate PDF invoices.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showMissingProfileDialog = false
+                        onNavigateToSettings()
+                    }
+                ) {
+                    Text("Go to Settings")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMissingProfileDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -64,7 +86,13 @@ fun InvoicePreviewScreen(
                 ) {
                     AppPrimaryButton(
                         text = "SHARE VIA WHATSAPP",
-                        onClick = { viewModel.shareInvoice() },
+                        onClick = {
+                            if (uiState.businessProfile?.isConfigured == true) {
+                                viewModel.shareInvoice()
+                            } else {
+                                showMissingProfileDialog = true
+                            }
+                        },
                         enabled = !uiState.isLoading,
                         modifier = Modifier.weight(1f)
                     )
@@ -113,15 +141,30 @@ private fun InvoiceDocument(
         verticalArrangement = Arrangement.spacedBy(Spacing.large)
     ) {
         // Business Header
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = profile?.businessName ?: "AquaLog Delivery",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(text = profile?.address ?: "Location Address", style = MaterialTheme.typography.bodySmall)
-            Text(text = "Phone: ${profile?.phone ?: ""}", style = MaterialTheme.typography.bodySmall)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Spacing.medium)
+        ) {
+            if (profile?.logoPath != null) {
+                LocalImage(
+                    path = profile.logoPath,
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = profile?.businessName ?: "AquaLog Delivery",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(text = profile?.address ?: "Location Address", style = MaterialTheme.typography.bodySmall)
+                Text(text = "Phone: ${profile?.phone ?: ""}", style = MaterialTheme.typography.bodySmall)
+            }
         }
 
         HorizontalDivider()
@@ -225,4 +268,10 @@ private fun SummaryRow(label: String, value: String) {
 private fun formatEpoch(epoch: Long): String {
     val date = Instant.fromEpochMilliseconds(epoch).toLocalDateTime(TimeZone.currentSystemDefault())
     return "${date.dayOfMonth} ${date.month.name.take(3)} ${date.year}"
+}
+
+private fun formatEpochShort(epoch: Long): String {
+    val date = Instant.fromEpochMilliseconds(epoch).toLocalDateTime(TimeZone.currentSystemDefault())
+    val monthName = date.month.name.lowercase().replaceFirstChar { it.uppercase() }.take(3)
+    return "${date.dayOfMonth} $monthName ${date.year}"
 }

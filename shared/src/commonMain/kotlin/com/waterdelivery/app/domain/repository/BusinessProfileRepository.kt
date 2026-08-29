@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface BusinessProfileRepository {
     fun getBusinessProfile(): Flow<BusinessProfile?>
     suspend fun saveBusinessProfile(profile: BusinessProfile)
+    suspend fun setOnboardingCompleted(completed: Boolean)
 }
