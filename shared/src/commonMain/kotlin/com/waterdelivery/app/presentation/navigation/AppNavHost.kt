@@ -208,7 +208,8 @@ fun AppNavHost(
                 AddDeliveryScreen(
                     viewModel = viewModel,
                     onBackClick = { navController.popBackStack() },
-                    onDeliverySaved = { navController.popBackStack() }
+                    onDeliverySaved = { navController.popBackStack() },
+                    onNavigateToAddCustomer = { navController.navigate(Screen.AddCustomer.route) }
                 )
             }
 
